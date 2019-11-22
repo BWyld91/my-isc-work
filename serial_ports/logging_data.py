@@ -40,19 +40,22 @@ ser = serial.Serial(
 
 # set output file
 
-output = '/home/user01/my-isc-work/serial_ports/output.tsv'
+output = '/home/user01/my-isc-work/serial_ports/output.csv'
 
 sio = io.TextIOWrapper(
     io.BufferedRWPair(ser, ser, 1),
     encoding='ascii', newline='\r'
 )
+sio._CHUNK_SIZE=1    #SUPER IMPORTANT LINE
 
 with open(output, 'a') as f: #appends to existing file
-      while ser.isOpen():    #logs while serial port open
+      count = 0 
+      while count < 20:    #logs while serial port open
           datastring = sio.readline()
           # \t adds tab between date and datastring \n adds new line after each reading
           f.write(datetime.utcnow().isoformat() +'\t' + datastring + '\n')
           f.flush() #forces to write to file after each reading rather than when got a few
+          count +=1 
           
 ser.close()
 
